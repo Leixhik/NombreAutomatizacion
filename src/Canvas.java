@@ -8,6 +8,9 @@ import java.util.List;
 public class Canvas extends JPanel {
     private final static int STROKE_SIZE = 8;
 
+    // Mantener todos los recorridos creados en canva
+    private List<List<ColorPoint>> allPaths;
+
     // Dibujar la linea entre ambos puntos
     private List<ColorPoint> currentPath;
 
@@ -28,6 +31,7 @@ public class Canvas extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // Inicialización de Variables
+        allPaths = new ArrayList<>(25);
         canvasWidth = targetWidth;
         canvasHeight = targetHeight;
 
@@ -52,6 +56,9 @@ public class Canvas extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                // Agregar los caminos recorridos a la lista
+                allPaths.add(currentPath);
+
                 // Reiniciar la ruta recorrida
                 currentPath = null;
             }
@@ -96,10 +103,35 @@ public class Canvas extends JPanel {
         g.dispose();
 
         // Reiniciar el recorrido
+        allPaths = new ArrayList<>(25);
         currentPath = null;
 
         repaint();
         revalidate();
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        // ReDibujar todos los dibujos creados
+        for (List<ColorPoint> path : allPaths) {
+            ColorPoint from = null;
+            for (ColorPoint point : path) {
+                g2d.setColor(point.getColor());
+
+                // En caso de cuando se crea solo un punto
+                if (path.size() == 1){
+                    g2d.fillRect(point.getX(), point.getY(), STROKE_SIZE, STROKE_SIZE);
+                }
+
+                if (from != null) {
+                    g2d.setStroke(new BasicStroke(STROKE_SIZE));
+                    g2d.drawLine(from.getX(), from.getY(), point.getX(), point.getY());
+                }
+                from = point;
+            }
+        }
     }
 
 }

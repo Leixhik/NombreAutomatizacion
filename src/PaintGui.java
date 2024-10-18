@@ -47,6 +47,10 @@ public class PaintGui extends JFrame {
                 canvas.resetCanvas();
             }
         });
+        canvasPanel.add(resetButton);
+        springLayout.putConstraint(SpringLayout.NORTH, resetButton, 10, SpringLayout.NORTH, canvasPanel);
+        springLayout.putConstraint(SpringLayout.WEST, resetButton, 180, SpringLayout.WEST, canvasPanel);
+
 
         this.getContentPane().add(canvasPanel);
     }
